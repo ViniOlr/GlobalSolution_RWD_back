@@ -1,48 +1,71 @@
 package br.com.fiap.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.com.fiap.to.UsuarioTO;
 
-public class UsuarioDAO {
+public class UsuarioDAO2 {
 
+	private Connection con;
+	private UsuarioTO usuario;
 	public static List<UsuarioTO> listaUsuario;
+	
+	
 
-	public UsuarioDAO() {
-		if (listaUsuario == null) {
-			listaUsuario = new ArrayList<UsuarioTO>();
+	public Connection getCon() {
+		return con;
+	}
 
-			UsuarioTO usuario = new UsuarioTO();
-			usuario.setNome("Vinicius de Oliveira");
-			usuario.setCPF("526.764.518-47");
-			usuario.setTelefone("(11) 96630-9946");
-			usuario.setDataNascimento("15/05/2003");
-			usuario.setEmail("vini@gmail.com");
-			usuario.setLogin("ViniOlr");
-			usuario.setRG("57.533.164-1");
-			usuario.setSenha("1234");
-			usuario.setSetor("Administrativo");
-			usuario.setRM(1);
-			listaUsuario.add(usuario);
+	public void setCon(Connection con) {
+		this.con = con;
+	}
 
-			usuario = new UsuarioTO();
-			usuario.setNome("Ricardo Silva");
-			usuario.setCPF("347.934.578-30");
-			usuario.setTelefone("(11) 93489-1438");
-			usuario.setDataNascimento("31/07/2000");
-			usuario.setEmail("ricardocontato@gmail.com");
-			usuario.setLogin("Ricardo");
-			usuario.setRG("31.647.177-1");
-			usuario.setSenha("1234");
-			usuario.setSetor("Administrativo");
-			usuario.setRM(2);
-			listaUsuario.add(usuario);
-		}
+	public UsuarioTO getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(UsuarioTO usuario) {
+		this.usuario = usuario;
+	}
+
+	public UsuarioDAO2() {
+		setCon(con);
 	}
 
 	public List<UsuarioTO> select() {
-		return listaUsuario;
+		String sql = "SELECT * FROM USUARIO";
+		try {
+			PreparedStatement ps = getCon().prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			listaUsuario = new ArrayList<UsuarioTO>();
+			if (rs != null) {
+				while (rs.next()) {
+					UsuarioTO usuario = new UsuarioTO();
+					usuario.setRM(rs.getInt(1));
+					usuario.setNome(rs.getString(2));
+					usuario.setRG(rs.getString(3));
+					usuario.setCPF(rs.getString(4));
+					usuario.setTelefone(rs.getString(5));
+					usuario.setEmail(rs.getString(6));
+					usuario.setDataNascimento(rs.getString(7));
+					usuario.setSetor(rs.getString(8));
+					usuario.setLogin(rs.getString(9));
+					usuario.setSenha(rs.getString(10));
+					listaUsuario.add(usuario);
+				}
+			} else {
+				System.out.println("Nenhum usuário cadastrado!");
+			}
+			return listaUsuario;
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 
 	public UsuarioTO select(int rm) {
