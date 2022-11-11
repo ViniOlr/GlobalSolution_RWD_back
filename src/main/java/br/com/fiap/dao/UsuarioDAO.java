@@ -90,6 +90,7 @@ public class UsuarioDAO {
 				return listaUsuario.get(i);
 			}
 		}
+		System.out.println("USUÁRIO : " + u.getLogin() + " NĂO VALIDADO!");
 		return null;
 	}
 }
